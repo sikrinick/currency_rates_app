@@ -21,18 +21,27 @@ class MainViewModel(
     val eventsObservable: LiveData<MainScreenEvent> = eventsData
 
     private var disposable by replaceableDisposable()
-    private var listFlowable: Flowable<List<CurrencyAmount>> = observeCurrencyExchangeUseCase
-        .execute()
+
+    private var listFlowable = defaultFlowable(CurrencyAmount("Euro", "EUR","1.00"))
+
+    private val currencyListComparator = CurrencyListComparator()
+
+    private fun defaultFlowable(currencyAmount: CurrencyAmount): Flowable<List<CurrencyAmount>> = observeCurrencyExchangeUseCase
+        .execute(currencyAmount)
+        .map { it.sortedWith(currencyListComparator) }
         .observeOn(schedulers.ui)
+
+    fun onViewFocused(currencyAmount: CurrencyAmount) {
+        currencyListComparator.increasePriorityFor(currencyAmount)
+        start()
+    }
 
     fun onAmountEntered(currencyAmount: CurrencyAmount) {
         listFlowable =
             if (currencyAmount.amount.isBlank()) {
                 Flowable.just(ratesData.value?.map { it.copy(amount = "") })
             } else {
-                observeCurrencyExchangeUseCase
-                    .execute(currencyAmount)
-                    .observeOn(schedulers.ui)
+                defaultFlowable(currencyAmount)
             }
         start()
     }

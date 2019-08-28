@@ -9,13 +9,18 @@ import com.sikrinick.currencytestapp.R
 import com.sikrinick.currencytestapp.presentation.main.adapter.CurrencyListAdapter
 import com.sikrinick.currencytestapp.presentation.model.CurrencyAmount
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModel<MainViewModel>()
-    private val currencyAdapter = CurrencyListAdapter { currencyAmount ->
-        viewModel.onAmountEntered(currencyAmount)
+    private val currencyAdapter by inject<CurrencyListAdapter> {
+        parametersOf(
+            { currencyAmount: CurrencyAmount -> viewModel.onViewFocused(currencyAmount) },
+            { currencyAmount: CurrencyAmount -> viewModel.onAmountEntered(currencyAmount) }
+        )
     }
 
 

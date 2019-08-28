@@ -12,9 +12,7 @@ class ObserveCurrencyExchangeUseCase(
     private val schedulers: AppSchedulers
 ) {
 
-    fun execute(
-        currencyAmount: CurrencyAmount = CurrencyAmount("Euro", "EUR","1.00")
-    ): Flowable<List<CurrencyAmount>> = observeCurrencyRatesUseCase
+    fun execute(currencyAmount: CurrencyAmount): Flowable<List<CurrencyAmount>> = observeCurrencyRatesUseCase
         .execute(currency = Currency.getInstance(currencyAmount.currencyCode))
         .observeOn(schedulers.computation)
         .switchMapSingle {  info ->
