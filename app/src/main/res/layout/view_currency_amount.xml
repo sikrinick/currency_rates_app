@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:padding="@dimen/common_margin"
+    >
+
+    <androidx.emoji.widget.EmojiTextView
+        android:id="@+id/country_flag"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="@dimen/common_margin"
+        android:gravity="center"
+        tools:text="💶"
+        />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/currency_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="EUR"
+            />
+
+        <TextView
+            android:id="@+id/currency_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Euro"
+            style="@style/TextAppearance.Small"
+            />
+
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/currency_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:inputType="numberDecimal"
+        android:imeOptions="actionDone"
+        tools:text="1.00"
+        />
+
+</LinearLayout>

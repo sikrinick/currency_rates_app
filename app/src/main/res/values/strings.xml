@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">CurrencyTestApplication</string>
+
+    <string name="unexpected_error">Unexpected error occurred</string>
+
+</resources>
