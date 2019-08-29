@@ -52,7 +52,7 @@ class ObserveCurrencyRatesUseCaseTest {
         )
 
         // Always return same test info
-        every { mockedRatesRepository.getRatesFor(currency) } returns Single.just(  testInfo)
+        every { mockedRatesRepository.getRatesFor(currency) } returns Single.just(testInfo)
 
         // Mocking network connected infinite observer
         every { mockedNetworkStateRepository.observeNetworkConnected() } returns Observable.create { it.onNext(true)  }

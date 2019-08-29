@@ -58,7 +58,7 @@ class MainViewModel(
             )
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun stop() {
         disposable?.dispose()
     }

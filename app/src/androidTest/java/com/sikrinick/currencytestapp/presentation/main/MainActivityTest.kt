@@ -7,10 +7,13 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.sikrinick.currencytestapp.R
+import com.sikrinick.currencytestapp.domain.schedulers.AppSchedulers
+import com.sikrinick.currencytestapp.presentation.main.adapter.CurrencyListAdapter
 import com.sikrinick.currencytestapp.presentation.main.utils.withRecyclerView
 import com.sikrinick.currencytestapp.presentation.model.CurrencyAmount
 import io.mockk.every
 import io.mockk.mockk
+import io.reactivex.schedulers.Schedulers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -37,6 +40,8 @@ class MainActivityTest {
         val mainViewModel = mockk<MainViewModel>(relaxUnitFun = true)
         loadKoinModules(
             module(override = true) {
+                val trampoline = Schedulers.trampoline()
+                single { CurrencyListAdapter(AppSchedulers(trampoline, trampoline, trampoline), {}, {}) }
                 viewModel { mainViewModel } }
         )
         ratesLiveData = MutableLiveData()
@@ -51,7 +56,7 @@ class MainActivityTest {
         rule.launchActivity(null)
 
         ratesLiveData.postValue(
-                listOf(
+            listOf(
                 CurrencyAmount(
                     displayName = "Euro",
                     currencyCode = "EUR",

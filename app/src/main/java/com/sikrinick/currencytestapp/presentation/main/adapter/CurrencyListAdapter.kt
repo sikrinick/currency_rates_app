@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sikrinick.currencytestapp.domain.schedulers.AppSchedulers
 import com.sikrinick.currencytestapp.presentation.model.CurrencyAmount
+import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.BehaviorSubject
@@ -56,6 +57,8 @@ class CurrencyListAdapter(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         disposable = listSubject
+            .toFlowable(BackpressureStrategy.LATEST)
+            .observeOn(schedulers.computation)
             .map { currencyAmountList to it }
             .map { (oldList, newList) ->
                 newList to DiffUtil.calculateDiff(
@@ -65,7 +68,6 @@ class CurrencyListAdapter(
                     )
                 )
             }
-            .subscribeOn(schedulers.computation)
             .observeOn(schedulers.ui)
             .subscribeBy(
                 onNext = { (newList, result) ->
