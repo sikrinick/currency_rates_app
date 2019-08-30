@@ -18,8 +18,8 @@ class MainActivity : AppCompatActivity() {
     private val viewModel by viewModel<MainViewModel>()
     private val currencyAdapter by inject<CurrencyListAdapter> {
         parametersOf(
-            { currencyAmount: CurrencyAmount -> viewModel.onViewFocused(currencyAmount) },
-            { currencyAmount: CurrencyAmount -> viewModel.onAmountEntered(currencyAmount) }
+            { currencyChosen: CurrencyAmount -> viewModel.onCurrencyChosen(currencyChosen) },
+            { amountEntered: CurrencyAmount -> viewModel.onAmountEntered(amountEntered) }
         )
     }
 

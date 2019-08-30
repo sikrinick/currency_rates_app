@@ -17,13 +17,5 @@ class CurrencyAmountDiffCallback(
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
         oldList[oldItemPosition].amount == newList[newItemPosition].amount
 
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        val oldItem = oldList[oldItemPosition]
-        val newItem = newList[newItemPosition]
-        return if (oldItem.amount != newItem.amount) {
-            newItem.amount
-        } else {
-            null
-        }
-    }
+    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int) = newList[newItemPosition].amount
 }

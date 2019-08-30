@@ -34,9 +34,9 @@ class ObserveCurrencyExchangeUseCaseTest {
         observeCurrencyRatesUseCase = mockk()
 
         observeCurrencyExchangeUseCase = ObserveCurrencyExchangeUseCase(
+            schedulers = schedulers,
             calculateAmountUseCase = calculateAmountUseCase,
-            observeCurrencyRatesUseCase = observeCurrencyRatesUseCase,
-            schedulers = schedulers
+            observeCurrencyRatesUseCase = observeCurrencyRatesUseCase
         )
     }
 
@@ -57,7 +57,9 @@ class ObserveCurrencyExchangeUseCaseTest {
             )
         }, BackpressureStrategy.LATEST)
 
-        observeCurrencyExchangeUseCase.execute(currencyAmount)
+        observeCurrencyExchangeUseCase.setAmount("1.00")
+        observeCurrencyExchangeUseCase.setCurrency("EUR")
+        observeCurrencyExchangeUseCase.execute()
             .subscribeOn(Schedulers.trampoline())
             .test()
             .assertValue {

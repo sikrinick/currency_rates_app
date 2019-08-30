@@ -39,6 +39,9 @@ class SortedCurrencyAmountList(adapter: RecyclerView.Adapter<*>) {
         override fun areItemsTheSame(oldItem: CurrencyAmount, newItem: CurrencyAmount) =
             oldItem.currencyCode == newItem.currencyCode
 
+        override fun areContentsTheSame(oldItem: CurrencyAmount, newItem: CurrencyAmount) =
+            oldItem.amount == newItem.amount
+
         override fun compare(first: CurrencyAmount, second: CurrencyAmount): Int {
             val firstCurrencyCode = first.currencyCode
             val secondCurrencyCode = second.currencyCode
@@ -55,16 +58,7 @@ class SortedCurrencyAmountList(adapter: RecyclerView.Adapter<*>) {
             }
         }
 
-        override fun areContentsTheSame(oldItem: CurrencyAmount, newItem: CurrencyAmount) =
-            oldItem.amount == newItem.amount
-
-        override fun getChangePayload(oldItem: CurrencyAmount, newItem: CurrencyAmount): Any? {
-            return if (oldItem.amount != newItem.amount) {
-                newItem.amount
-            } else {
-                null
-            }
-        }
+        override fun getChangePayload(oldItem: CurrencyAmount, newItem: CurrencyAmount) = newItem.amount
 
     })
 

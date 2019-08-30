@@ -10,7 +10,9 @@ class ReplaceableDisposableDelegation {
     private var disposable: Disposable? = null
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Disposable?) {
-        disposable?.dispose()
+        if (disposable?.isDisposed == false) {
+            disposable?.dispose()
+        }
         disposable = value
     }
 

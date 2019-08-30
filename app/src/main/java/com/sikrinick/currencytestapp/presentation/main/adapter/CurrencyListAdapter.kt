@@ -26,7 +26,7 @@ class CurrencyListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         CurrencyAmountViewHolder(
             parent,
-            onViewFocused = onViewFocused, //{ onViewFocused.setAsTopElement(it) },
+            onViewFocused = onViewFocused, //{ onCurrencyChosen.setAsTopElement(it) },
             onAmountEntered = onAmountEntered
         )
 

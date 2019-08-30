@@ -5,7 +5,6 @@ import com.sikrinick.currencytestapp.domain.schedulers.AppSchedulers
 import com.sikrinick.currencytestapp.domain.usecase.currency.ObserveCurrencyExchangeUseCase
 import com.sikrinick.currencytestapp.presentation.model.CurrencyAmount
 import com.sikrinick.currencytestapp.utils.replaceableDisposable
-import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 
@@ -22,33 +21,25 @@ class MainViewModel(
 
     private var disposable by replaceableDisposable()
 
-    private var listFlowable = defaultFlowable(CurrencyAmount("Euro", "EUR","1.00"))
-
     private val currencyListComparator = CurrencyListComparator()
 
-    private fun defaultFlowable(currencyAmount: CurrencyAmount): Flowable<List<CurrencyAmount>> = observeCurrencyExchangeUseCase
-        .execute(currencyAmount)
-        .map { it.sortedWith(currencyListComparator) }
-        .observeOn(schedulers.ui)
+    init {
+        observeCurrencyExchangeUseCase.setCurrency("EUR")
+        observeCurrencyExchangeUseCase.setAmount("1.00")
+    }
 
-    fun onViewFocused(currencyAmount: CurrencyAmount) {
+    fun onCurrencyChosen(currencyAmount: CurrencyAmount) {
         currencyListComparator.increasePriorityFor(currencyAmount)
-        start()
+        observeCurrencyExchangeUseCase.setCurrency(currencyAmount.currencyCode)
     }
 
-    fun onAmountEntered(currencyAmount: CurrencyAmount) {
-        listFlowable =
-            if (currencyAmount.amount.isBlank()) {
-                Flowable.just(ratesData.value?.map { it.copy(amount = "") })
-            } else {
-                defaultFlowable(currencyAmount)
-            }
-        start()
-    }
+    fun onAmountEntered(currencyAmount: CurrencyAmount) = observeCurrencyExchangeUseCase.setAmount(currencyAmount.amount)
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun start() {
-        disposable = listFlowable
+        disposable = observeCurrencyExchangeUseCase.execute()
+            .map { it.sortedWith(currencyListComparator) }
+            .observeOn(schedulers.ui)
             .subscribeBy(
                 onNext = { ratesData.value = it },
                 onError = { error ->
