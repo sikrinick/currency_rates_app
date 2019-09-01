@@ -18,7 +18,11 @@ class CalculateAmountUseCaseTest {
 
     @Test
     fun execute() {
-        val result = calculateAmountUseCase.execute("2.00", "1.24531")
-        assert(result == "2.49")
+        val result = calculateAmountUseCase.execute(
+            "2.00",
+            "1.24531",
+            "43.5356"
+        )
+        assert(result == "69.92")
     }
 }

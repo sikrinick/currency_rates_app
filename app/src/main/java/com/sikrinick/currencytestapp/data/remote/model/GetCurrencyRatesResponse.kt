@@ -6,7 +6,7 @@ import java.util.*
 
 data class GetCurrencyRatesResponse(
     @SerializedName("base")
-    val baseCurrency: Currency,
+    val currencyCode: String,
     @SerializedName("date")
     val date: Date,
     @SerializedName("rates")

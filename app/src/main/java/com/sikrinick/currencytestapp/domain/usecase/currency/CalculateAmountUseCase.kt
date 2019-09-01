@@ -7,8 +7,18 @@ class CalculateAmountUseCase(
     private val formatter: BigDecimalFormatter
 ) {
 
-    fun execute(baseAmount: String, rate: String): String {
-        val exchangedAmount = BigDecimal(baseAmount) * BigDecimal(rate)
+    //EUR/USD = 1.61
+    //EUR/PLN = 4.27
+    //USD/PLN = 4.27 / 1.61
+
+    fun execute(
+        baseCurrencyAmount: String,
+        baseCurrencyRate: String,
+        targetCurrencyRate: String
+    ): String {
+        val exchangedAmount = BigDecimal(baseCurrencyAmount) *
+                BigDecimal(targetCurrencyRate) /
+                BigDecimal(baseCurrencyRate)
         return formatter.format(exchangedAmount)
     }
 

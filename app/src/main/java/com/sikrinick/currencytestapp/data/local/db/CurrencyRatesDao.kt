@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sikrinick.currencytestapp.data.local.db.model.LocalDbCurrencyRates
+import com.sikrinick.currencytestapp.data.local.db.model.LocalDbCurrencyRate
 import io.reactivex.Completable
 import io.reactivex.Single
 
@@ -12,8 +12,8 @@ import io.reactivex.Single
 interface CurrencyRatesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun update(localDbCurrencyRates: LocalDbCurrencyRates): Completable
+    fun updateAll(localDbCurrencyRates: List<LocalDbCurrencyRate>): Completable
 
-    @Query("SELECT * FROM LocalDbCurrencyRates WHERE currencyCode = :currencyCode")
-    fun get(currencyCode: String): Single<LocalDbCurrencyRates>
+    @Query("SELECT * FROM LocalDbCurrencyRate")
+    fun getAll(): Single<List<LocalDbCurrencyRate>>
 }

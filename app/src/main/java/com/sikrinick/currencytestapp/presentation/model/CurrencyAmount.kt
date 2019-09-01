@@ -3,7 +3,6 @@ package com.sikrinick.currencytestapp.presentation.model
 import java.util.*
 
 
-
 data class CurrencyAmount(
     val displayName: String,
     val currencyCode: String,
@@ -25,11 +24,14 @@ data class CurrencyAmount(
         const val USD = "USD"
         const val EUR = "EUR"
         const val GBP = "GBP"
+
+        fun from(currencyCode: String, amount: String): CurrencyAmount {
+            val currency = Currency.getInstance(currencyCode)
+            return CurrencyAmount(
+                displayName = currency.displayName,
+                currencyCode = currency.currencyCode,
+                amount = amount
+            )
+        }
     }
 }
-
-fun Currency.toCurrencyAmount(amount: String) = CurrencyAmount(
-    displayName = displayName,
-    currencyCode = currencyCode,
-    amount = amount
-)

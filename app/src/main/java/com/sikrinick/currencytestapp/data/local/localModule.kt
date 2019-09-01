@@ -1,7 +1,6 @@
 package com.sikrinick.currencytestapp.data.local
 
 import com.sikrinick.currencytestapp.data.local.db.AppDatabase
-import com.sikrinick.currencytestapp.data.local.db.CurrencyModelsMapper
 import com.sikrinick.currencytestapp.data.local.db.CurrencyRatesDb
 import com.sikrinick.currencytestapp.data.platform.NetworkInfoProvider
 import com.sikrinick.currencytestapp.data.platform.NetworkStateRepository
@@ -13,8 +12,7 @@ val localModule = module {
     single { get<AppDatabase>().currencyRates() }
 
 
-    single { CurrencyModelsMapper(get()) }
-    single { CurrencyRatesDb(get(), get()) }
+    single { CurrencyRatesDb(get()) }
 
 
     single { NetworkInfoProvider(get()) }

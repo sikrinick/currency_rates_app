@@ -4,8 +4,6 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.sikrinick.currencytestapp.shared.model.CurrencyRate
-import java.util.*
-import kotlin.collections.ArrayList
 
 class CurrencyRateListTypeAdapter: TypeAdapter<List<CurrencyRate>>() {
 
@@ -13,7 +11,7 @@ class CurrencyRateListTypeAdapter: TypeAdapter<List<CurrencyRate>>() {
         output?.apply {
             beginObject()
             value?.forEach {
-                name(it.currency.currencyCode)
+                name(it.currencyCode)
                 value(it.ratePerOne)
             }
             endObject()
@@ -26,7 +24,7 @@ class CurrencyRateListTypeAdapter: TypeAdapter<List<CurrencyRate>>() {
             while(hasNext()) {
                 it.add(
                     CurrencyRate(
-                        Currency.getInstance(nextName()),
+                        nextName(),
                         nextString()
                     )
                 )

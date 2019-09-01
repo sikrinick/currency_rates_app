@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.sikrinick.currencytestapp.domain.schedulers.AppSchedulers
 import com.sikrinick.currencytestapp.domain.usecase.currency.ObserveCurrencyExchangeUseCase
 import com.sikrinick.currencytestapp.presentation.model.CurrencyAmount
+import com.sikrinick.currencytestapp.shared.model.MainCurrency
 import com.sikrinick.currencytestapp.utils.replaceableDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
@@ -24,8 +25,8 @@ class MainViewModel(
     private val currencyListComparator = CurrencyListComparator()
 
     init {
-        observeCurrencyExchangeUseCase.setCurrency("EUR")
-        observeCurrencyExchangeUseCase.setAmount("1.00")
+        observeCurrencyExchangeUseCase.setCurrency(MainCurrency.currencyCode)
+        observeCurrencyExchangeUseCase.setAmount(MainCurrency.amount)
     }
 
     fun onCurrencyChosen(currencyAmount: CurrencyAmount) {
@@ -51,7 +52,9 @@ class MainViewModel(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun stop() {
-        disposable?.dispose()
+        if (disposable?.isDisposed == false) {
+            disposable?.dispose()
+        }
     }
 
 

@@ -1,8 +1,6 @@
 package com.sikrinick.currencytestapp.domain.usecase.currency
 
 import com.sikrinick.currencytestapp.domain.schedulers.AppSchedulers
-import com.sikrinick.currencytestapp.presentation.model.CurrencyAmount
-import com.sikrinick.currencytestapp.shared.model.CurrencyInfo
 import com.sikrinick.currencytestapp.shared.model.CurrencyRate
 import io.mockk.every
 import io.mockk.mockk
@@ -11,7 +9,6 @@ import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
 import org.junit.Test
-import java.util.*
 
 class ObserveCurrencyExchangeUseCaseTest {
 
@@ -20,8 +17,6 @@ class ObserveCurrencyExchangeUseCaseTest {
     private lateinit var schedulers: AppSchedulers
 
     private lateinit var observeCurrencyExchangeUseCase: ObserveCurrencyExchangeUseCase
-
-    private val currencyAmount = CurrencyAmount("Euro", "EUR", "1.00")
 
     @Before
     fun before() {
@@ -43,16 +38,14 @@ class ObserveCurrencyExchangeUseCaseTest {
     @Test
     fun execute() {
 
-        every { calculateAmountUseCase.execute(any(), any()) } returns "535.45"
+        every { calculateAmountUseCase.execute(any(), any(), any()) } returns "535.45"
 
-        every { observeCurrencyRatesUseCase.execute(any()) } returns Flowable.create({
+        every { observeCurrencyRatesUseCase.execute() } returns Flowable.create({
             it.onNext(
-                CurrencyInfo(
-                    Currency.getInstance(currencyAmount.currencyCode),
-                    rates = listOf(
-                        CurrencyRate(Currency.getInstance("PLN"), "3.90"),
-                        CurrencyRate(Currency.getInstance("USD"), "4.40")
-                    )
+                listOf(
+                    CurrencyRate("PLN", "3.90"),
+                    CurrencyRate("USD", "4.40"),
+                    CurrencyRate("EUR", "1.00")
                 )
             )
         }, BackpressureStrategy.LATEST)

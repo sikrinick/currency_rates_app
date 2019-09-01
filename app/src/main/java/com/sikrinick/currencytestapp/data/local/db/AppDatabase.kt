@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.sikrinick.currencytestapp.data.local.db.model.LocalDbCurrencyRates
+import com.sikrinick.currencytestapp.data.local.db.model.LocalDbCurrencyRate
 
-@Database(entities = [LocalDbCurrencyRates::class], version = 1, exportSchema = false)
+@Database(entities = [LocalDbCurrencyRate::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun currencyRates(): CurrencyRatesDao

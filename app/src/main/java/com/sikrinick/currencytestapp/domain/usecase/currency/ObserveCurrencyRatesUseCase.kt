@@ -5,7 +5,6 @@ import com.sikrinick.currencytestapp.data.platform.NetworkStateRepository
 import com.sikrinick.currencytestapp.domain.schedulers.AppSchedulers
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ObserveCurrencyRatesUseCase(
@@ -14,7 +13,7 @@ class ObserveCurrencyRatesUseCase(
     private val schedulers: AppSchedulers
 ) {
 
-    fun execute(currency: Currency) = networkStateRepository
+    fun execute() = networkStateRepository
         .observeNetworkConnected()
         .switchMap { connected ->
             if (connected) {
@@ -24,7 +23,7 @@ class ObserveCurrencyRatesUseCase(
             }
         }
         .switchMapSingle {
-            currencyRatesRepository.getRatesFor(currency)
+            currencyRatesRepository.getRates()
         }
         .toFlowable(BackpressureStrategy.LATEST)
         .subscribeOn(schedulers.io)

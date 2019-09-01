@@ -1,12 +1,11 @@
 package com.sikrinick.currencytestapp.domain.usecase.currency
 
 import com.sikrinick.currencytestapp.domain.schedulers.AppSchedulers
-import com.sikrinick.currencytestapp.presentation.model.toCurrencyAmount
+import com.sikrinick.currencytestapp.presentation.model.CurrencyAmount
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
-import io.reactivex.rxkotlin.withLatestFrom
+import io.reactivex.rxkotlin.Flowables
 import io.reactivex.subjects.BehaviorSubject
-import java.util.*
 
 class ObserveCurrencyExchangeUseCase(
     private val observeCurrencyRatesUseCase: ObserveCurrencyRatesUseCase,
@@ -25,25 +24,30 @@ class ObserveCurrencyExchangeUseCase(
         amountSubject.onNext(amount)
     }
 
-    fun execute() = currencyCodeSubject
-        .toFlowable(BackpressureStrategy.LATEST)
-        .observeOn(schedulers.io)
-        .switchMap { observeCurrencyRatesUseCase.execute(currency = Currency.getInstance(it)) }
+    fun execute() = Flowables
+        .combineLatest(
+            observeCurrencyRatesUseCase.execute(),
+            currencyCodeSubject.toFlowable(BackpressureStrategy.LATEST),
+            amountSubject.toFlowable(BackpressureStrategy.LATEST)
+        )
         .observeOn(schedulers.computation)
-        .withLatestFrom(amountSubject.toFlowable(BackpressureStrategy.LATEST))
-        .switchMapSingle { (info, amount) ->
-            Flowable.fromIterable(info.rates)
+        .map { (rates, baseCurrencyCode, baseCurrencyAmount) ->
+            val baseCurrencyRate = rates.first { it.currencyCode == baseCurrencyCode }.ratePerOne
+            Triple(rates, baseCurrencyRate, baseCurrencyAmount)
+        }
+        .switchMapSingle { (rates, baseCurrencyRate, baseCurrencyAmount) ->
+            Flowable.fromIterable(rates)
                 .parallel()
-                .map { rate ->
-                    rate.currency to calculateAmountUseCase.execute(
-                        baseAmount = amount,
-                        rate = rate.ratePerOne
+                .map { (currencyCode, ratePerOne) ->
+                    currencyCode to calculateAmountUseCase.execute(
+                        baseCurrencyAmount = baseCurrencyAmount,
+                        baseCurrencyRate = baseCurrencyRate,
+                        targetCurrencyRate = ratePerOne
                     )
                 }
-                .map { (currency, amount) -> currency.toCurrencyAmount(amount) }
+                .map { (currencyCode, amount) -> CurrencyAmount.from(currencyCode, amount) }
                 .sequential()
                 .toList()
-
         }
 
 }

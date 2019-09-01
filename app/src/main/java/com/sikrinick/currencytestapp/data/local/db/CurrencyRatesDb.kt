@@ -1,22 +1,31 @@
 package com.sikrinick.currencytestapp.data.local.db
 
-import com.sikrinick.currencytestapp.shared.model.CurrencyInfo
-import java.util.*
+import com.sikrinick.currencytestapp.data.local.db.model.LocalDbCurrencyRate
+import com.sikrinick.currencytestapp.shared.model.CurrencyRate
 
 class CurrencyRatesDb(
-    private val currencyRatesDao: CurrencyRatesDao,
-    private val currencyModelsMapper: CurrencyModelsMapper
+    private val currencyRatesDao: CurrencyRatesDao
 ) {
 
-    fun updateRatesFor(currencyInfo: CurrencyInfo) =
-        currencyRatesDao.update(
-            currencyModelsMapper.toLocalDbCurrencyRates(currencyInfo)
+    fun updateRates(currencyRates: List<CurrencyRate>) =
+        currencyRatesDao.updateAll(
+            currencyRates.map {
+                LocalDbCurrencyRate(
+                    currencyCode = it.currencyCode,
+                    rate = it.ratePerOne
+                )
+            }
         )
 
-    fun getRatesFor(currency: Currency) =
-        currencyRatesDao.get(currencyCode = currency.currencyCode)
-            .map {
-                currencyModelsMapper.toCurrencyInfo(it)
+    fun getRates() =
+        currencyRatesDao.getAll()
+            .map {  list ->
+                list.map {
+                    CurrencyRate(
+                        it.currencyCode,
+                        it.rate
+                    )
+                }
             }
 
 }

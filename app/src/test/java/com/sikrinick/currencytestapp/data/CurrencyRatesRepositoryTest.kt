@@ -3,7 +3,6 @@ package com.sikrinick.currencytestapp.data
 import com.sikrinick.currencytestapp.data.local.db.CurrencyRatesDb
 import com.sikrinick.currencytestapp.data.remote.api.CurrencyApi
 import com.sikrinick.currencytestapp.data.remote.model.GetCurrencyRatesResponse
-import com.sikrinick.currencytestapp.shared.model.CurrencyInfo
 import com.sikrinick.currencytestapp.shared.model.CurrencyRate
 import io.mockk.every
 import io.mockk.mockk
@@ -31,30 +30,29 @@ class CurrencyRatesRepositoryTest {
 
     @Test
     fun `get from api and save to db`() {
-        val currency = Currency.getInstance("EUR")
-        every { currencyApiService.getRatesFor(currency) } returns Single.just(
+        val testInfo = listOf(
+            CurrencyRate("PLN", "3.58"),
+            CurrencyRate("USD", "1.18")
+        )
+
+        every { currencyApiService.getRates() } returns Single.just(
             GetCurrencyRatesResponse(
-                currency,
+                "EUR",
                 Date(),
-                listOf(
-                    CurrencyRate(Currency.getInstance("PLN"), "3.58"),
-                    CurrencyRate(Currency.getInstance("USD"), "1.18")
-                )
+                testInfo
             )
         )
 
-        every { currencyRatesDb.updateRatesFor(any()) } returns Completable.complete()
+        every { currencyRatesDb.updateRates(any()) } returns Completable.complete()
+        every { currencyRatesDb.getRates() } returns Single.just(testInfo + CurrencyRate("EUR", "1.00"))
 
-        currencyRatesRepository.getRatesFor(currency)
+        currencyRatesRepository.getRates()
             .test()
             .assertValue(
-                CurrencyInfo(
-                    currency,
-                    listOf(
-                        CurrencyRate(Currency.getInstance("PLN"), "3.58"),
-                        CurrencyRate(Currency.getInstance("USD"), "1.18"),
-                        CurrencyRate(Currency.getInstance("EUR"), "1.00")
-                    )
+                listOf(
+                    CurrencyRate("PLN", "3.58"),
+                    CurrencyRate("USD", "1.18"),
+                    CurrencyRate("EUR", "1.00")
                 )
             )
             .assertComplete()
@@ -63,31 +61,24 @@ class CurrencyRatesRepositoryTest {
 
     @Test
     fun `on any api error get from db`() {
-        val currency = Currency.getInstance("EUR")
+        every { currencyApiService.getRates() } returns Single.error(RuntimeException("Any network error"))
 
-        every { currencyApiService.getRatesFor(any()) } returns Single.error(RuntimeException("Any network error"))
-
-        every { currencyRatesDb.getRatesFor(any()) } returns Single.just(
-            CurrencyInfo(
-                currency,
-                listOf(
-                    CurrencyRate(Currency.getInstance("PLN"), "3.58"),
-                    CurrencyRate(Currency.getInstance("USD"), "1.18")
-                )
+        every { currencyRatesDb.getRates() } returns Single.just(
+            listOf(
+                CurrencyRate("PLN", "3.58"),
+                CurrencyRate("USD", "1.18"),
+                CurrencyRate("EUR", "1.00")
             )
         )
 
 
-        currencyRatesRepository.getRatesFor(Currency.getInstance("EUR"))
+        currencyRatesRepository.getRates()
             .test()
             .assertValue(
-                CurrencyInfo(
-                    currency,
-                    listOf(
-                        CurrencyRate(Currency.getInstance("PLN"), "3.58"),
-                        CurrencyRate(Currency.getInstance("USD"), "1.18"),
-                        CurrencyRate(Currency.getInstance("EUR"), "1.00")
-                    )
+                listOf(
+                    CurrencyRate("PLN", "3.58"),
+                    CurrencyRate("USD", "1.18"),
+                    CurrencyRate("EUR", "1.00")
                 )
             )
             .assertComplete()

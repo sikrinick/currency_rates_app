@@ -5,13 +5,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class LocalDbCurrencyRates(
+data class LocalDbCurrencyRate(
 
     @PrimaryKey
     val currencyCode: String,
 
-    @ColumnInfo(name = "rates")
-    val rates: String
+    @ColumnInfo(name = "rate")
+    val rate: String
 )
 
 
